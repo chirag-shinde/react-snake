@@ -5,12 +5,14 @@ import { getOppositeDirection } from "../utility/helper";
 const Grid = ({ gridSize }) => {
   const initialSnake = [{ x: 5, y: 1 }, { x: 4, y: 1 }, { x: 3, y: 1 }];
   const initialDirection = 39;
-  const [food, setFood] = useState({ x: 20, y: 15 });
+  const initialFoodLocation = { x: 20, y: 15 };
+  const [food, setFood] = useState(initialFoodLocation);
   const [snake, setSnake] = useState(initialSnake);
   const [direction, setDirection] = useState(initialDirection);
   const [gameStatus, setGameStatus] = useState(0);
-  // Get all X and Y co-ordinates of Snake.
+  const [score, setScore] = useState(0);
 
+  const highscore = localStorage.getItem("highscore");
   //Handle GameState Effect
   useEffect(() => {
     if (gameStatus !== 1) return;
@@ -19,7 +21,8 @@ const Grid = ({ gridSize }) => {
       clearInterval(timerID);
     };
   });
-  //EventListener
+
+  // EventListener for keydown
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -79,7 +82,18 @@ const Grid = ({ gridSize }) => {
       setFood({ x, y });
     }
   };
+  const resetGame = () => {
+    setGameStatus(0);
+    setSnake(initialSnake);
+    setFood(initialFoodLocation);
+    setDirection(initialDirection);
+    if (score > highscore) {
+      localStorage.setItem("highscore", score);
+    }
+    setScore(0);
+  };
   const moveSnake = () => {
+    console.log(snake.length);
     let newSnake = [...snake];
     const oldHead = { ...newSnake[0] };
     const newHead = { ...oldHead };
@@ -97,16 +111,21 @@ const Grid = ({ gridSize }) => {
     }
     newSnake.unshift(newHead);
     if (collidedWithEdge(newHead.x, newHead.y)) {
-      setGameStatus(0);
-      setSnake(initialSnake);
-      setDirection(initialDirection);
+      resetGame();
       return;
     }
+
     if (newHead.x === food.x && newHead.y === food.y) {
       createFood();
+      setScore(score + 1);
     } else {
       newSnake.pop();
     }
+    if (isSnake(newHead.x, newHead.y) && snake.length > 4) {
+      resetGame();
+      return;
+    }
+
     setSnake(newSnake);
   };
   return (
@@ -128,6 +147,13 @@ const Grid = ({ gridSize }) => {
         >
           Pause
         </button>
+        <span>Current Score: {score}</span>
+        <span> HighScore: {highscore ? highscore : "-"}</span>
+        <span>
+          {highscore && score > highscore
+            ? " You've beaten your high score!"
+            : ""}
+        </span>
       </div>
       {constructGrid()}
     </div>
