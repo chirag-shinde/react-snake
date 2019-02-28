@@ -129,34 +129,39 @@ const Grid = ({ gridSize }) => {
     setSnake(newSnake);
   };
   return (
-    <div className="grid">
-      <div className="btn">
-        <button
-          onClick={() => {
-            setGameStatus(1);
-          }}
-          disabled={gameStatus !== 0}
-        >
-          Start
-        </button>
-        <button
-          onClick={() => {
-            setGameStatus(0);
-          }}
-          disabled={gameStatus !== 1}
-        >
-          Pause
-        </button>
-        <span>Current Score: {score}</span>
-        <span> HighScore: {highscore ? highscore : "-"}</span>
-        <span>
-          {highscore && score > highscore
-            ? " You've beaten your high score!"
-            : ""}
-        </span>
+    <>
+      <div className="info">
+        Press Space to Start/Pause or Click on Start/Pause
       </div>
-      {constructGrid()}
-    </div>
+      <div className="grid">
+        <div className="btn">
+          <button
+            onClick={() => {
+              setGameStatus(1);
+            }}
+            disabled={gameStatus !== 0}
+          >
+            Start
+          </button>
+          <button
+            onClick={() => {
+              setGameStatus(0);
+            }}
+            disabled={gameStatus !== 1}
+          >
+            Pause
+          </button>
+          <span>Current Score: {score}</span>
+          <span> HighScore: {highscore ? highscore : "-"}</span>
+          <span>
+            {highscore && score > highscore
+              ? " You've beaten your high score!"
+              : ""}
+          </span>
+        </div>
+        {constructGrid()}
+      </div>
+    </>
   );
 };
 
