@@ -3,13 +3,11 @@ import GridCell from "./GridCell";
 import { getOppositeDirection } from "../utility/helper";
 
 const Grid = ({ gridSize }) => {
+  const initialSnake = [{ x: 5, y: 1 }, { x: 4, y: 1 }, { x: 3, y: 1 }];
+  const initialDirection = 39;
   const [food, setFood] = useState({ x: 20, y: 15 });
-  const [snake, setSnake] = useState([
-    { x: 5, y: 1 },
-    { x: 4, y: 1 },
-    { x: 3, y: 1 }
-  ]);
-  const [direction, setDirection] = useState(39);
+  const [snake, setSnake] = useState(initialSnake);
+  const [direction, setDirection] = useState(initialDirection);
   const [gameStatus, setGameStatus] = useState(0);
   // Get all X and Y co-ordinates of Snake.
 
@@ -65,6 +63,11 @@ const Grid = ({ gridSize }) => {
       ))
     );
   };
+  const collidedWithEdge = (x, y) => {
+    if (x >= gridSize || x < 0 || y >= gridSize || y < 0) {
+      return true;
+    }
+  };
   const createFood = () => {
     const [x, y] = [
       Math.floor(Math.random() * Math.floor(gridSize)),
@@ -93,6 +96,12 @@ const Grid = ({ gridSize }) => {
       newHead.y = newHead.y - 1;
     }
     newSnake.unshift(newHead);
+    if (collidedWithEdge(newHead.x, newHead.y)) {
+      setGameStatus(0);
+      setSnake(initialSnake);
+      setDirection(initialDirection);
+      return;
+    }
     if (newHead.x === food.x && newHead.y === food.y) {
       createFood();
     } else {
