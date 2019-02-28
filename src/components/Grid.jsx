@@ -72,8 +72,9 @@ const Grid = ({ gridSize }) => {
     ];
     if (isSnake(x, y)) {
       createFood();
+    } else {
+      setFood({ x, y });
     }
-    setFood({ x, y });
   };
   const moveSnake = () => {
     let newSnake = [...snake];
